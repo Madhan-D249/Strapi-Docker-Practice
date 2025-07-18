@@ -2,35 +2,32 @@ version: "3.8"
 
 services:
   strapi:
-    build: .
+    build:
+      context: ./strapi     # <-- where your code is
+      dockerfile: ../Dockerfile  # <-- Dockerfile is one level above
     container_name: strapi-app
+    env_file:
+      - ./strapi/.env
     ports:
       - "1337:1337"
-    environment:
-      DATABASE_CLIENT: postgres
-      DATABASE_HOST: postgres-db
-      DATABASE_PORT: 5432
-      DATABASE_NAME: strapi
-      DATABASE_USERNAME: strapi
-      DATABASE_PASSWORD: strapi
-      NODE_ENV: development
-    depends_on:
-      - postgres-db
     volumes:
-      - .:/app
+      - ./strapi:/app
       - /app/node_modules
+    depends_on:
+      - postgres
 
-  postgres-db:
+  postgres:
     image: postgres:15
     container_name: postgres-db
+    restart: always
     environment:
-      POSTGRES_DB: strapi
       POSTGRES_USER: strapi
       POSTGRES_PASSWORD: strapi
-    ports:
-      - "5432:5432"
+      POSTGRES_DB: strapi
     volumes:
       - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 
 volumes:
   pgdata:
