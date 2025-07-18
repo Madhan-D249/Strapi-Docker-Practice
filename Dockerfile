@@ -13,4 +13,4 @@ COPY . .
 EXPOSE 1337
 
 # Start the Strapi app
-CMD ["npm", "start"]
+CMD ["npm","run", "start"]
