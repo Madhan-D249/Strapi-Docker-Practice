@@ -29,4 +29,4 @@ COPY --from=build /app ./
 EXPOSE 1337
 
 # Run Strapi in production mode
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "develop"]
