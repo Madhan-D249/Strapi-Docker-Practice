@@ -1,24 +1,16 @@
-# Stage 1: Build
-FROM node:20 as build
+FROM node:20
 
 WORKDIR /app
 
+# Copy package files and install
 COPY package*.json ./
 RUN npm install
 
+# Copy rest of the code
 COPY . .
-RUN npm run build
 
-# Stage 2: Production
-FROM node:20-slim as production
-
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm install --omit=dev --ignore-scripts
-
-COPY --from=build /app ./
-
+# Expose Strapi's default port
 EXPOSE 1337
 
+# Start the Strapi app
 CMD ["npm", "run", "start"]
