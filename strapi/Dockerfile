@@ -1,21 +1,32 @@
-# Base image
-FROM node:20
+# Stage 1: Build
+FROM node:20 as build
 
-# Set working directory
 WORKDIR /app
 
-# Copy package files and install dependencies
+# Copy package files and install only dependencies needed for building
 COPY package*.json ./
 RUN npm install
 
-# Copy the rest of the app
+# Copy all source code
 COPY . .
 
-# Build Strapi admin panel
+# Build the Strapi admin panel
 RUN npm run build
 
-# Expose the default Strapi port
+# Stage 2: Production
+FROM node:20-slim as production
+
+WORKDIR /app
+
+# Only copy what's needed for production
+COPY package*.json ./
+RUN npm install --omit=dev --ignore-scripts
+
+# Copy build output and code from the builder stage
+COPY --from=build /app ./
+
+# Expose Strapi default port
 EXPOSE 1337
 
-# Start the app
-CMD ["npm", "run", "develop"]
+# Run Strapi in production mode
+CMD ["npm", "run", "start"]
