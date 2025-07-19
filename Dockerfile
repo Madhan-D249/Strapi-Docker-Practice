@@ -2,15 +2,12 @@ FROM node:20
 
 WORKDIR /app
 
-# Install dependencies
-COPY package*.json ./
+# Copy package files and install dependencies
+COPY strapi/package*.json ./
 RUN npm install
 
-# Copy source code
-COPY . .
+# Copy the rest of the app
+COPY strapi/. .
 
-# Expose Strapi default port
 EXPOSE 1337
-
-# Start the Strapi app
-CMD ["npm","run", "start"]
+CMD ["npm", "run", "develop"]
